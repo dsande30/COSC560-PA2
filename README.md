@@ -1,6 +1,22 @@
 # COSC 560 Programming Assignment 2
 ## Dakota Sanders & Andrey Karnauch
 
+### Shell script
+If ```/usr/lib/jvm/default-java``` does not exist, do a ```sudo apt-get install default-jdk```
+#### Set up environment:
+```
+export HADOOP_HOME=/usr/local/hadoop-2.7.6/
+export JAVA_HOME=/usr/lib/jvm/default-java
+export PATH=${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${PATH}
+```
+#### Creating files on HDFS:
+```
+hadoop fs -[ls, mkdir, copyFromLocal] /tmp
+```
+#### Running mapper.py and reducer.py
+```
+hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files mapper.py,reducer.py -mapper mapper.py -reducer reducer.py -input /tmp/akarnauc/book.txt -output /tmp/akarnauc/out.txt
+```
 ### MapReduce Function 1: StopWords
 Implement mapping function that analyzes the wordcount of all words from a corpus. Reduce function creates a blacklist of stopwords based on a user-configurable percentage.
 

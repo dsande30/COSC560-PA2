@@ -3,38 +3,33 @@
 
 from operator import itemgetter
 import sys
+from operator import itemgetter
 
-current_word = None
-current_count = 0
-word = None
+wc = {}
+threshold = 0.30
 
-# input comes from STDIN
 for line in sys.stdin:
-    # remove leading and trailing whitespace
     line = line.strip()
-
-    # parse the input we got from mapper.py
     word, count = line.split('\t', 1)
-
-    # convert count (currently a string) to int
-    try:
-        count = int(count)
-    except ValueError:
-        # count was not a number, so silently
-        # ignore/discard this line
-        continue
-
+    count = int(count)
     # this IF-switch only works because Hadoop sorts map output
     # by key (here: word) before it is passed to the reducer
-    if current_word == word:
-        current_count += count
+    if word in wc:
+        wc[word] += count
     else:
-        if current_word:
-            # write result to STDOUT
-            print '%s\t%s' % (current_word, current_count)
-        current_count = count
-        current_word = word
+        wc[word] = count
 
-# do not forget to output the last word if needed!
-if current_word == word:
-    print '%s\t%s' % (current_word, current_count)
+total = float(sum(wc.values()))
+total_perc = 0
+stops = {}
+for key, val in sorted(wc.items(), key = itemgetter(1), reverse = True):
+    perc = val/total
+    total_perc += perc
+    if total_perc < threshold:
+        stops[key] = (val, perc)
+
+    print ("{}\t{}\t{}".format(key, val, perc))
+
+with open('stop_words.txt', 'w') as f:
+    for key, val in sorted(stops.items(), key = itemgetter(1), reverse = True):
+        f.write("{}\tCount: {}\t\tPercentage: {:.3}%\n".format(key, val[0], val[1]*100))

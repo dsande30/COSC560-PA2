@@ -15,7 +15,7 @@ hadoop fs -[ls, mkdir, copyFromLocal] /tmp
 ```
 #### Running mapper.py and reducer.py
 ```
-hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files mapper.py,reducer.py -mapper mapper.py -reducer reducer.py -input /tmp/akarnauc/book.txt -output /tmp/akarnauc/out.txt
+hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files ii-mapper.py,ii-reducer.py,shakebooks/ -mapper ii-mapper.py -reducer ii-reducer.py -input /tmp/akarnauc/books/dummy.txt -output /tmp/akarnauc/out
 ```
 ### MapReduce Function 1: StopWords
 Implement mapping function that analyzes the wordcount of all words from a corpus. Reduce function creates a blacklist of stopwords based on a user-configurable percentage.

@@ -43,5 +43,6 @@ for line in sys.stdin:
         ii[word][doc_id][line_no] = {}
         ii[word][doc_id][line_no]['count'] = 1
 
-with open('ii-results.json', 'w') as f:
-    json.dump(ii, f)
+print(json.dumps(ii))
+# with open('ii-results.json', 'w') as f:
+# json.dump(ii, f)

@@ -3,7 +3,6 @@
 
 from operator import itemgetter
 import sys
-from operator import itemgetter
 
 wc = {}
 threshold = 0.30

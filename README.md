@@ -1,21 +1,23 @@
 # COSC 560 Programming Assignment 2
 ## Dakota Sanders & Andrey Karnauch
 
-### Shell script
-If ```/usr/lib/jvm/default-java``` does not exist, do a ```sudo apt-get install default-jdk```
 #### Set up environment:
 ```
 export HADOOP_HOME=/usr/local/hadoop-2.7.6/
-export JAVA_HOME=/usr/lib/jvm/default-java
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 export PATH=${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${PATH}
 ```
 #### Creating files on HDFS:
 ```
 hadoop fs -[ls, mkdir, copyFromLocal] /tmp
 ```
-#### Running mapper.py and reducer.py
+#### Running mapper/reducer for Stop Words
 ```
-hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files ii-mapper.py,ii-reducer.py,shakebooks/ -mapper ii-mapper.py -reducer ii-reducer.py -input /tmp/akarnauc/books/dummy.txt -output /tmp/akarnauc/out
+hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files wc-mapper.py,wc-reducer.py,shakebooks/ -mapper 'wc-mapper.py shakebooks' -reducer wc-reducer.py -input /tmp/akarnauc/dummy.txt -output /tmp/akarnauc/out
+```
+#### Running mapper/reducer for Inverse Indexer
+```
+hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files ii-mapper.py,ii-reducer.py,shakebooks/ -mapper 'ii-mapper.py shakebooks' -reducer ii-reducer.py -input /tmp/akarnauc/dummy.txt -output /tmp/akarnauc/out
 ```
 ### MapReduce Function 1: StopWords
 Implement mapping function that analyzes the wordcount of all words from a corpus. Reduce function creates a blacklist of stopwords based on a user-configurable percentage.

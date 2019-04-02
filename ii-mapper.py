@@ -4,7 +4,7 @@ import os
 import re
 
 # print("About to walk this ho")
-for root, dirs, files in os.walk('shakebooks'):
+for root, dirs, files in os.walk(sys.argv[1]):
     for fname in files:
         if '.crc' not in fname:
             with open(root + os.path.sep + fname, 'r') as f:

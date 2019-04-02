@@ -18,7 +18,7 @@ for root, dirs, files in os.walk(sys.argv[1]):
                 i = 0
                 for line in f.readlines():
                     line = line.strip().lower()
-                    res = re.sub(ur"[^a-zA-Z'\s]+",'', line)
+                    res = re.sub(r"[^a-zA-Z'\s]+",'', line)
                     words = res.split()
                     for word in words:
                         if word not in stop_words:

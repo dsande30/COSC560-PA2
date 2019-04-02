@@ -11,7 +11,7 @@ for root, dirs, files in os.walk(sys.argv[1]):
             with open(root + os.path.sep + fname, 'r') as f:
                 for line in f.readlines():
                     line = line.strip().lower()
-                    res = re.sub(ur"[^a-zA-Z'\s]+",'', line)
+                    res = re.sub(r"[^a-zA-Z'\s]+",'', line)
                     words = res.split()
                     for word in words:
                         print("{}\t{}".format(word, 1))

@@ -3,7 +3,13 @@ import sys
 import os
 import re
 
-# print("About to walk this ho")
+stop_words = []
+
+with open(sys.argv[2]) as f:
+    for line in f.readlines():
+        word, count, freq = line.strip().split('\t')
+        stop_words.append(word)
+
 for root, dirs, files in os.walk(sys.argv[1]):
     for fname in files:
         if '.crc' not in fname:
@@ -15,5 +21,6 @@ for root, dirs, files in os.walk(sys.argv[1]):
                     res = re.sub(ur"[^\w'\s]+",'', line)
                     words = res.split()
                     for word in words:
-                        print("{}\t{}\t{}".format(doc_id, word, i))
+                        if word not in stop_words:
+                            print("{}\t{}\t{}".format(doc_id, word, i))
                     i += 1

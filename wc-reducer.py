@@ -22,7 +22,7 @@ stops = {}
 for key, val in sorted(wc.items(), key = itemgetter(1), reverse = True):
     perc = val/total
     total_perc += perc
-    if total_perc < threshold:
+    if total_perc < threshold or 'gutenberg' in key:
         stops[key] = (val, perc)
         print ("{}\t{}\t{}".format(key, val, perc))
 

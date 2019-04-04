@@ -5,7 +5,7 @@ from operator import itemgetter
 import sys
 
 wc = {}
-threshold = 0.35
+threshold = 0.50
 
 for line in sys.stdin:
     line = line.strip()

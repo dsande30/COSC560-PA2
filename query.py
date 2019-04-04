@@ -3,6 +3,10 @@
 import sys
 from operator import itemgetter
 
+if len(sys.argv) != 2:
+    print("1 input argument is required! Trying running as './query.py inverted_index.txt'") 
+    sys.exit()
+
 fname = sys.argv[1]
 with open(fname, "r") as f:
     lookup = eval(f.read())
@@ -23,7 +27,8 @@ def outputVals(word):
     return 0
 
 def parseInput(args):
-    words = [x.strip() for x in args.split(',')]
+    words = [x.strip().lower() for x in args.split(',')]
+    words = list(set(filter(None, words)))
     for word in words:
         outputVals(word)
     print("")

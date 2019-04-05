@@ -2,13 +2,16 @@
 ## Dakota Sanders & Andrey Karnauch
 
 ### Express Installation
-First, copy the repository by executing the following command while SSH'ed into your hadoop resource manager:
+
+To begin, first set up a hadoop instance on `cloudlab`. Use the default configuration with the "Physical Nodes" box checked.
+
+Then, copy the repository by executing the following command while SSH'ed into your hadoop resource manager:
 
 ```
 git clone https://github.com/dsande30/COSC560-PA2
 ```
 
-We have created a set of shell scripts that will handle the installation process in the Hadoop File System. To run these scripts, execute the following commands:
+We have created a shell script that will handle the installation process in the Hadoop File System. To run these scripts, execute the following commands:
 
 ```
 cd COSC560-PA2
@@ -40,7 +43,7 @@ After running the shell script, a list of generated stopwords can be found withi
 
 The function works in two parts:
 
-The mapper function, `wc-mapper.py`, works by reading a directory name as a command line argument. In our case, this argument is provided as the `books` directory. For each file, it iterates through every word in the file and checks it against a regular expression filtering out all non-word values. We allow for apostrophes to include conjunctions, and the program is case-insensitive.
+The mapper function, `wc-mapper.py`, works by reading a **directory** name as a command line argument. In our case, this argument is provided as the `books` directory. For each file, it iterates through every word in the file and checks it against a regular expression filtering out all non-word values. We allow for apostrophes to include conjunctions, and the program is case-insensitive.
 
 The reducer function, `wc-reducer.py`, works by reading in the results of the mapper function and creating a dictionary with the word as the key, and its number of occurances as the value. Once this dictionary is created, we sort the keys based on the total percentage of words in the corpus, and output the top 50\% as stopwords. We chose 50\% as our threshold because it captures the most common stopwords without sacrificing many important words. This value, however, is arbitrary and may not be representative of other corpuses. Furthermore, because our corpus comes from the Gutenberg library, we add any values containing the string `gutenberg` to the list of stopwords.
 
@@ -51,6 +54,9 @@ To test this function locally without the Hadoop File System, run the following 
 ```
 
 where `books` is a directory containing the corpus of text files, and `wc-mapper.py` and `wc-reducer.py` are the executables.
+
+An example of the output is: ![](documentation/pa2-wc.png)
+where the first column shows the word, the second column shows the number of times it appears in the whole corpus, and the last column shows the frequency of the word.
 
 #### Function 2: Inverted Index
 The inverted index function is also split into a mapper, `ii-mapper.py`, and a reducer, `ii-reducer.py`.
@@ -73,13 +79,24 @@ The reducer function works by reading the output of the mapper on `stdin`. It th
 
 To test the Inverted Index MapReduce function locally, you can execute the following command:
 ```
-./ii-mapper.py books stop_words.txt | ./ii-reducer.py
+./ii-mapper.py books example-output/stop_words.txt | ./ii-reducer.py
 ```
-where `books` is the directory containing text files of the corpus and `stop_words.txt` is the output from the previous stopword MapReduce job. This command will output a large, nested dictionary to `stdout`.
+where `books` is the directory containing text files of the corpus and `stop_words.txt` is the output from the previous stopword MapReduce job (an example one is included for local testing). This command will output a large, nested dictionary to `stdout`. An example of this output is shown here: ![](documentation/pa2-ii.png)
 
 #### The Query Program
 The query program is a simple way to query the final result of the inverted indexer. The program takes the output of the Inverted Index MapReduce job previously and reads in the dictionary. From there, a user is able to search for a single word or a list of comma-separated words in the corpus. The query program outputs the searched for words along with the documents they appear in, which lines they appear on, and the number of times they appear on that line. The query program is case-insensitive and also indicates empty result sets (i.e. the word does not exist in the corpus). It can be run and tested locally using the command:
 ```
-./query.py inverted_index.txt
+./query.py example-output/inverted_index.txt
 ```
-where inverted_index.txt is the result from the Inverted Index MapReduce job.
+where inverted_index.txt is the result from the Inverted Index MapReduce job (an example one is include for local testing). Example output from the query program is showing below ![](documentation/pa2-q.png)
+
+#### Additional Comments
+All of the Hadoop streaming commands can be found inside the `run.sh` script. For documentation purposes, we will include the two Hadoop streaming commands here as well. To run the stop word generator on Hadoop:
+```
+hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files wc-mapper.py,wc-reducer.py,books -mapper 'wc-mapper.py books' -reducer wc-reducer.py -input /tmp/ta_demo/dummy.txt -output /tmp/ta_demo/wc-out
+```
+To run the inverted index creator on Hadoop:
+```
+hadoop jar /usr/local/hadoop-2.7.6/share/hadoop/tools/lib/hadoop-streaming-2.7.6.jar -files ii-mapper.py,ii-reducer.py,books,stop_words.txt -mapper 'ii-mapper.py books stop_words.txt' -reducer ii-reducer.py -input /tmp/ta_demo/dummy.txt -output /tmp/ta_demo/ii-out
+```
+You will notice several command line arguments in these hadoop-streaming commands. These are all accounted for within the shell script to placed accordingly around the local filesystem and the Hadoop filesystem.

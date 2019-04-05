@@ -30,6 +30,8 @@ Escape character is q or Q
 
 From here, enter any list of comma separated words to query their locations in the corpus.
 
+**NOTE**: If anything seems to go wrong during the shell script or you would like to run it again from scratch, please execute `./reset.sh` first to clean up the relevant directories and files before running `source ./run.sh` again!
+
 ### The Corpus
 For the purposes of this experiment, we have selected our corpus to be 6 selected works from Shakespeare. To modify the corpus, either add or remove text files from the `books/` directory. The program parses these files to create the inverted index. 
 
